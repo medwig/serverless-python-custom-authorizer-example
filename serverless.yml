@@ -1,0 +1,27 @@
+service: custom-authorizer
+frameworkVersion: ">=1.13.2 <2.0.0"
+
+provider:
+  name: aws
+  runtime: python3.6
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - "execute-api:Invoke"
+      Resource: "arn:aws:execute-api:*:*:*"
+    - Effect: Allow
+      Action:
+        - lambda:InvokeFunction
+      Resource: "arn:aws:lambda:*:*:function:*"
+
+functions:
+  foo:
+    handler: foo.handler
+    events:
+      - http:
+          path: /foo
+          method: get
+          authorizer: authorizer
+
+  authorizer:
+    handler: auth.handler
